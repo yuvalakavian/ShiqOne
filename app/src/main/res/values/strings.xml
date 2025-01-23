@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ShiqOne</string>
+    <string name="title_home">Home</string>
+    <string name="title_upload">Upload</string>
+    <string name="title_profile">Profile</string>
+    <string name="edit_post">Edit Post</string>
+</resources>
