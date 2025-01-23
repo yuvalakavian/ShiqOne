@@ -19,8 +19,8 @@
             android:id="@+id/greeting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hi Kristin, have a shiq day"
-            android:textSize="24sp"
+            android:text="Hi Kristin,\nhave a shiq day"
+            android:textSize="50sp"
             android:textColor="#000000"
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
