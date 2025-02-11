@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ShiqOne</string>
+    <string name="title_home">Home</string>
+    <string name="title_upload">Upload</string>
+    <string name="title_profile">Profile</string>
+    <string name="edit_post">Edit Post</string>
+    <string name="forgot_password">forgot password?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+</resources>
