@@ -1,5 +1,7 @@
 package com.example.shiqone.ui.profile
 
+import com.example.shiqone.LoginActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +34,14 @@ class ProfileFragment : Fragment() {
         profileViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
+        val intent = Intent(getActivity(), LoginActivity::class.java)
+
+        // Optionally, pass data to the second Activity
+        intent.putExtra("key", "value")
+
+        // Start the second Activity
+        startActivity(intent)
         return root
     }
 
