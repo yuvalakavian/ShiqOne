@@ -1,4 +1,4 @@
-package com.idz.colman24class1.model
+package com.example.shiqone.model
 
 import EmptyCallback
 import PostsCallback
@@ -27,28 +27,35 @@ class FirebaseModel {
     }
 
     fun getAllPosts(sinceLastUpdated: Long, callback: PostsCallback) {
-
         database.collection(Constants.Collections.POSTS)
             .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, sinceLastUpdated.toFirebaseTimestamp)
             .get()
-            .addOnCompleteListener {
-                when (it.isSuccessful) {
-                    true -> {
-                        val posts: MutableList<Post> = mutableListOf()
-                        for (json in it.result) {
-                            posts.add(Post.fromJSON(json.data))
-                        }
-                        Log.d("TAG", posts.size.toString())
-                        callback(posts)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val posts = mutableListOf<Post>()
+                    for (document in task.result) {
+                        // Create Post with Firebase document ID + data
+                        val post = Post(
+                            id = document.id, // Firebase document ID as primary key
+                            content = document.getString(Post.CONTENT_KEY) ?: "",
+                            userID = document.getString(Post.USER_ID_KEY) ?: "",
+                            avatarUri = document.getString(Post.AVATAR_URL_KEY) ?: "",
+                            isDeleted = document.getBoolean(Post.IS_DELETED_KEY) ?: false,
+                            lastUpdated = document.getTimestamp(Post.LAST_UPDATED)?.toDate()?.time
+                        )
+                        posts.add(post)
                     }
-
-                    false -> callback(listOf())
+                    Log.d("Firestore", "Fetched ${posts.size} posts")
+                    callback(posts)
+                } else {
+                    Log.e("Firestore", "Error getting posts", task.exception)
+                    callback(emptyList())
                 }
             }
     }
 
     fun add(post: Post, callback: EmptyCallback) {
-        database.collection(Constants.Collections.POSTS).document(post.id).set(post.json)
+        database.collection(Constants.Collections.POSTS).document(post.id.toString()).set(post.json)
             .addOnCompleteListener {
                 callback()
             }
@@ -58,7 +65,7 @@ class FirebaseModel {
     }
 
     fun delete(post: Post, callback: EmptyCallback) {
-        database.collection(Constants.Collections.POSTS).document(post.id).delete()
+        database.collection(Constants.Collections.POSTS).document(post.id.toString()).delete()
         .addOnCompleteListener {
             callback()
         }
@@ -85,7 +92,7 @@ class FirebaseModel {
     }
 
     fun update(post: Post, callback: EmptyCallback) {
-        database.collection(Constants.Collections.POSTS).document(post.id).set(post.json)
+        database.collection(Constants.Collections.POSTS).document(post.id.toString()).set(post.json)
             .addOnCompleteListener {
                 callback()
             }
