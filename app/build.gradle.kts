@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,12 @@ plugins {
     id("kotlin-kapt")
 }
 
+val properties = Properties()
+val propertiesFile = rootProject.file("api.properties")
+
+if (propertiesFile.exists()) {
+    properties.load(propertiesFile.inputStream())
+}
 
 android {
     namespace = "com.example.shiqone"
@@ -18,6 +26,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "CLOUD_NAME", "\"${properties.getProperty("CLOUD_NAME","")}\"")
+        buildConfigField("String", "API_KEY", "\"${properties.getProperty("API_KEY","")}\"")
+        buildConfigField("String", "API_SECRET", "\"${properties.getProperty("API_SECRET","")}\"")
     }
 
     buildTypes {
@@ -38,6 +50,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -70,5 +83,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.7.2")
     implementation("com.squareup.retrofit2:converter-gson:2.7.2")
     implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
-    implementation("com.google.android.gms:play-services-base:18.2.0")
+    implementation("com.google.android.gms:play-services-base:18.2.0" )
+    implementation(libs.cloudinary.android)
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")  // For Transformations
+
 }
