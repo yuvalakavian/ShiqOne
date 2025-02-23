@@ -25,6 +25,7 @@ firebaseAuthKtx = "23.2.0"
 firebaseDatabaseKtx = "21.0.0"
 picasso = "2.8"
 cardview = "1.0.0"
+cloudinaryAndroid = "3.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,7 @@ firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx",
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinaryAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
