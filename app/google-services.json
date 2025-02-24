@@ -1,0 +1,29 @@
+{
+    "project_info": {
+      "project_number": "817069850579",
+      "project_id": "shiqone-a8029",
+      "storage_bucket": "shiqone-a8029.firebasestorage.app"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:817069850579:android:d770514b2b6bb4481f7926",
+          "android_client_info": {
+            "package_name": "com.example.shiqone"
+          }
+        },
+        "oauth_client": [],
+        "api_key": [
+          {
+            "current_key": "AIzaSyBVI9zg0XP6oig3BMn7c68PUDLFMEhnscc"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
