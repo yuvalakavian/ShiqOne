@@ -32,6 +32,11 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        // Open the edit profile fragment when clicking the edit icon
+        binding.editIcon.setOnClickListener {
+            val editFragment = EditProfileFragment()
+            editFragment.show(parentFragmentManager, "EditProfileFragment")
+        }
 
         // Observe LiveData for username and update the UI accordingly
         profileViewModel.userName.observe(viewLifecycleOwner) { name ->
