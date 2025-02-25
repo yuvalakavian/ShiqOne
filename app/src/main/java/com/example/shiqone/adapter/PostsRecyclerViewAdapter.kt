@@ -1,15 +1,24 @@
 package com.example.shiqone.adapter
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shiqone.R
+import com.example.shiqone.base.MyApplication.Globals.context
 import com.example.shiqone.model.Post
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 class PostsRecyclerViewAdapter(
@@ -29,51 +38,63 @@ class PostsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
-        holder.postHeader.text = post.content
-        holder.postImage.let { imageView ->
-            if (post.avatarUri.isNotEmpty()) {
-                Picasso.get()
-                    .load(post.avatarUri)
-                    .placeholder(R.drawable.ic_profile_placeholder)
-                    .into(imageView)
+        holder.postContent.text = post.content
+
+        // Clear the image before loading a new one
+        holder.postImage.setImageResource(R.drawable.ic_profile_placeholder)
+
+       holder.postHeader.text = post.userName
+
+        if (post.avatarUri.isNotEmpty()) {
+            Picasso.get()
+                .load(post.avatarUri)
+                .placeholder(R.drawable.ic_profile_placeholder)
+                .error(R.drawable.ic_profile_placeholder)
+                .into(holder.postImage, object : Callback {
+                    override fun onSuccess() {
+                        // Image loaded successfully
+                    }
+
+                    override fun onError(e: Exception?) {
+                        Log.e("PostsRecyclerViewAdapter", "Failed to load image: ${e?.message}")
+                    }
+                })
+        } else {
+            Picasso.get()
+                .load(R.drawable.ic_profile_placeholder)
+                .into(holder.postImage)
+        }
+
+        holder.editPostIcon.setOnClickListener { listener.onEditPost(post) }
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            if (post.userID != currentUser.uid) {
+                holder.deletePostIcon.visibility = View.GONE
+                holder.editPostIcon.visibility = View.GONE
             } else {
-                // Optionally, load a default image if avatarUri is empty
-                Picasso.get()
-                    .load(R.drawable.ic_profile_placeholder)
-                    .into(imageView)
+                holder.deletePostIcon.visibility = View.VISIBLE
+                holder.editPostIcon.visibility = View.VISIBLE
             }
         }
 
-
-        holder.editPostIcon.setOnClickListener { v: View? -> listener.onEditPost(post) }
-        holder.deletePostIcon.setOnClickListener { v: View? ->
-            listener.onDeletePost(
-                post
-            )
-        }
+        holder.deletePostIcon.setOnClickListener { listener.onDeletePost(post) }
     }
+
 
     override fun getItemCount(): Int {
         return posts.size
     }
 
     fun updatePosts(updatedPosts: List<Post>) {
-        val oldPosts = this.posts
-        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = oldPosts.size
-            override fun getNewListSize(): Int = updatedPosts.size
-            override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean =
-                oldPosts[oldPos].id == updatedPosts[newPos].id
-            override fun areContentsTheSame(oldPos: Int, newPos: Int): Boolean =
-                oldPosts[oldPos] == updatedPosts[newPos]
-        })
         this.posts = updatedPosts
-        diff.dispatchUpdatesTo(this)
+        notifyDataSetChanged() // Notify the adapter that the data has changed
     }
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var postHeader: TextView = itemView.findViewById(R.id.post_header)
-        var profileImage: ImageView = itemView.findViewById(R.id.profile_image)
+        val postContent: TextView = itemView.findViewById(R.id.post_content)
         var postImage: ImageView = itemView.findViewById(R.id.post_image)
         var editPostIcon: ImageView = itemView.findViewById(R.id.edit_post_icon)
         var deletePostIcon: ImageView = itemView.findViewById<ImageView>(R.id.delete_post_icon)

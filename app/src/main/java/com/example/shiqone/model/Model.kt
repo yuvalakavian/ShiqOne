@@ -150,7 +150,7 @@ class Model private constructor() {
 
                 if (response.isSuccessful) {
                     val weather_response_body = response.body()
-                    Log.e("TAG", "Fetched weather!")
+                    Log.d("TAG", "Fetched weather!")
                     this.weather.postValue(weather_response_body)
                 } else {
                     Log.e("TAG", "Failed to fetch weather!")

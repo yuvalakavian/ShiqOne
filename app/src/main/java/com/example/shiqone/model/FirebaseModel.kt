@@ -41,7 +41,8 @@ class FirebaseModel {
                             userID = document.getString(Post.USER_ID_KEY) ?: "",
                             avatarUri = document.getString(Post.AVATAR_URL_KEY) ?: "",
                             isDeleted = document.getBoolean(Post.IS_DELETED_KEY) ?: false,
-                            lastUpdated = document.getTimestamp(Post.LAST_UPDATED)?.toDate()?.time
+                            lastUpdated = document.getTimestamp(Post.LAST_UPDATED)?.toDate()?.time,
+                            userName= document.getString(Post.USERNAME_KEY) ?: "",
                         )
                         posts.add(post)
                     }

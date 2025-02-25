@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels;
@@ -27,6 +28,7 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
     private lateinit var progressBar: ProgressBar;
     private lateinit var swipeRefresh: SwipeRefreshLayout;
     private lateinit var postsAdapter: PostsRecyclerViewAdapter;
+    private lateinit var greetingsTextView: TextView
 
     // Obtain the PostsListViewModel (similar to StudentsListViewModel)
     private val viewModel: PostsListViewModel by viewModels();
@@ -44,6 +46,7 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
         allPostsButton = view.findViewById(R.id.all_posts_button);
         progressBar = view.findViewById(R.id.progress_bar);
         swipeRefresh = view.findViewById(R.id.swipe_refresh);
+        greetingsTextView = view.findViewById(R.id.greeting_text)
 
         // Set up RecyclerView with an initially empty adapter.
         recyclerView.layoutManager = LinearLayoutManager(requireContext());
@@ -86,6 +89,8 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
         if (currentUser != null) {
             // A user is logged in
             // You can use currentUser.uid, currentUser.email, etc.
+            greetingsTextView.text = String.format("Hi %s,\nhave a shiq day ",currentUser.displayName)
+
         } else {
             // No user is logged in
             // Redirect to login or show a message accordingly

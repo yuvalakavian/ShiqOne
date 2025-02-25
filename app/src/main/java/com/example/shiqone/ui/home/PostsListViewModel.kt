@@ -32,12 +32,15 @@ class PostsListViewModel : ViewModel() {
     fun refreshAllPosts() {
         _showOnlyMine.value = false
         Model.shared.refreshAllPosts()
+        _showOnlyMine.value = _showOnlyMine.value // Force update
     }
 
     fun loadMyPosts() {
         _showOnlyMine.value = true
         Model.shared.refreshAllPosts()
+        _showOnlyMine.value = _showOnlyMine.value // Force update
     }
+
 
 
     fun updatePost(updatedPost: Post) {

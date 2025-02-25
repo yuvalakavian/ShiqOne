@@ -18,7 +18,8 @@ data class Post(
     @PrimaryKey val id: String,
     var content: String,
     val userID: String,
-    val avatarUri: String,
+    val userName: String,
+    var avatarUri: String,
     var isDeleted: Boolean,
     val lastUpdated: Long? = null
 ) : Serializable {
@@ -41,9 +42,11 @@ data class Post(
         const val CONTENT_KEY = "content"
         const val USER_ID_KEY = "userID"
         const val AVATAR_URL_KEY = "avatarUrl"
-        const val IS_DELETED_KEY = "isChecked"
+        const val IS_DELETED_KEY = "isDeleted"
         const val LAST_UPDATED = "lastUpdated"
         const val LOCAL_LAST_UPDATED = "locaStudentLastUpdated"
+        const val USERNAME_KEY = "userName"
+
 
         fun fromJSON(json: Map<String, Any>): Post {
             // Get Firebase document ID as String
@@ -55,6 +58,7 @@ data class Post(
                 userID = json[USER_ID_KEY] as? String ?: "",
                 avatarUri = json[AVATAR_URL_KEY] as? String ?: "",
                 isDeleted = json[IS_DELETED_KEY] as? Boolean ?: false,
+                userName = json[USERNAME_KEY] as? String ?: "",  // New field mapping
                 lastUpdated = (json[LAST_UPDATED] as? Timestamp)?.toDate()?.time
             )
         }
@@ -65,6 +69,7 @@ data class Post(
                 ID_KEY to id,
             CONTENT_KEY to content,
             USER_ID_KEY to userID,
+            USERNAME_KEY to userName,
                 AVATAR_URL_KEY to avatarUri,
                 IS_DELETED_KEY to isDeleted,
                 LAST_UPDATED to FieldValue.serverTimestamp()

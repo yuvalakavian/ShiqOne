@@ -1,60 +1,100 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="8dp"
+    android:background="@android:color/white"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="8dp"
     tools:context="PostsRecyclerViewAdapter">
 
+    <!-- Profile Image and Edit/Delete Icons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <!-- Profile Image -->
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_profile_placeholder"
             android:layout_marginEnd="8dp"
-            android:contentDescription="Profile Image" />
+            android:contentDescription="Profile Image"
+            android:src="@drawable/ic_profile_placeholder" />
 
-        <!-- Post Header -->
         <TextView
             android:id="@+id/post_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kristin Hennessy: my outfit"
-            android:textSize="16sp"
-            android:textColor="#000000"
-            android:textStyle="bold" />
+            android:text="Kristin Hennessy"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:shadowColor="@color/white"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"/>
+
+        <!-- Spacer to push edit/delete icons to the end -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <!-- Edit Icon -->
         <ImageView
             android:id="@+id/edit_post_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_edit"
-            android:contentDescription="Edit Post" />
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Edit Post"
+            android:src="@drawable/ic_edit" />
 
+        <!-- Delete Icon -->
         <ImageView
             android:id="@+id/delete_post_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_delete_24"
-            android:contentDescription="Delete Post" />
+            android:contentDescription="Delete Post"
+            android:src="@drawable/ic_delete_24" />
     </LinearLayout>
 
-    <!-- Post Image -->
-    <ImageView
-        android:id="@+id/post_image"
+    <!-- Post Image with Overlay Text -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/ic_post_placeholder"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="8dp" />
+        android:layout_height="400dp"
+        android:layout_marginTop="8dp">
+
+        <!-- Post Image -->
+        <ImageView
+            android:id="@+id/post_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_post_placeholder" />
+
+        <!-- Overlay for Post Header (Display Name) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#80000000"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:id="@+id/post_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kristin Hennessy"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:shadowColor="#000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"/>
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
