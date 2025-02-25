@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shiqone.R
 import com.example.shiqone.base.MyApplication.Globals.context
+import com.example.shiqone.model.FirebaseModel
 import com.example.shiqone.model.Post
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -20,12 +21,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-
 class PostsRecyclerViewAdapter(
     private var posts: List<Post>,
     private val listener: PostActionListener
 ) :
     RecyclerView.Adapter<PostsRecyclerViewAdapter.PostViewHolder>() {
+
     interface PostActionListener {
         fun onEditPost(post: Post?)
         fun onDeletePost(post: Post?)
@@ -40,11 +41,44 @@ class PostsRecyclerViewAdapter(
         val post = posts[position]
         holder.postContent.text = post.content
 
-        // Clear the image before loading a new one
+        // Clear the images before loading new ones
         holder.postImage.setImageResource(R.drawable.ic_profile_placeholder)
+        holder.profileImage.setImageResource(R.drawable.ic_profile_placeholder)
 
-       holder.postHeader.text = post.userName
+        // Set post header (user name)
+        holder.postHeader.text = post.userName
 
+        // Fetch avatarUri from Firebase based on the userId for profile image
+        val firebaseModel = FirebaseModel()
+        firebaseModel.getUser(post.userID) { user ->
+            if (user != null) {
+                // Load the user's profile image (avatar)
+                if (user.avatarUri.isNotEmpty()) {
+                    Picasso.get()
+                        .load(user.avatarUri)
+                        .placeholder(R.drawable.ic_profile_placeholder)
+                        .error(R.drawable.ic_profile_placeholder)
+                        .into(holder.profileImage, object : Callback {
+                            override fun onSuccess() {
+                                // Image loaded successfully
+                            }
+
+                            override fun onError(e: Exception?) {
+                                Log.e("PostsRecyclerViewAdapter", "Failed to load image: ${e?.message}")
+                            }
+                        })
+                } else {
+                    Picasso.get()
+                        .load(R.drawable.ic_profile_placeholder)
+                        .into(holder.profileImage)
+                }
+
+                // Set the user displayName to postHeader (if needed)
+                holder.postHeader.text = user.displayName
+            }
+        }
+
+        // Set the post image (if there's an image in the post)
         if (post.avatarUri.isNotEmpty()) {
             Picasso.get()
                 .load(post.avatarUri)
@@ -56,15 +90,14 @@ class PostsRecyclerViewAdapter(
                     }
 
                     override fun onError(e: Exception?) {
-                        Log.e("PostsRecyclerViewAdapter", "Failed to load image: ${e?.message}")
+                        Log.e("PostsRecyclerViewAdapter", "Failed to load post image: ${e?.message}")
                     }
                 })
         } else {
-            Picasso.get()
-                .load(R.drawable.ic_profile_placeholder)
-                .into(holder.postImage)
+            holder.postImage.setImageResource(R.drawable.ic_profile_placeholder)
         }
 
+        // Edit and delete icons visibility logic
         holder.editPostIcon.setOnClickListener { listener.onEditPost(post) }
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
@@ -82,7 +115,6 @@ class PostsRecyclerViewAdapter(
         holder.deletePostIcon.setOnClickListener { listener.onDeletePost(post) }
     }
 
-
     override fun getItemCount(): Int {
         return posts.size
     }
@@ -93,10 +125,12 @@ class PostsRecyclerViewAdapter(
     }
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var profileImage: ImageView = itemView.findViewById(R.id.profile_image)
         var postHeader: TextView = itemView.findViewById(R.id.post_header)
         val postContent: TextView = itemView.findViewById(R.id.post_content)
         var postImage: ImageView = itemView.findViewById(R.id.post_image)
         var editPostIcon: ImageView = itemView.findViewById(R.id.edit_post_icon)
-        var deletePostIcon: ImageView = itemView.findViewById<ImageView>(R.id.delete_post_icon)
+        var deletePostIcon: ImageView = itemView.findViewById(R.id.delete_post_icon)
     }
 }
+
