@@ -32,6 +32,15 @@ class ProfileFragment : Fragment() {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        // Weather display (unchanged)
+        profileViewModel.fetchWeather()
+        profileViewModel.weather.observe(viewLifecycleOwner) { weather ->
+            binding.weatherTemp.text = String.format(
+                "%s °C",
+                weather.hourlyWeather.temperature2m[0].toString()
+            )
+        }
+
         // Open the edit profile fragment when clicking the edit icon
         binding.editIcon.setOnClickListener {
             val editFragment = EditProfileFragment()

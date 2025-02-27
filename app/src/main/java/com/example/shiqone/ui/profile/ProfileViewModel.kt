@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.shiqone.model.Model
+import com.example.shiqone.model.Weather
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -40,6 +41,11 @@ class ProfileViewModel : ViewModel() {
                 // Handle error
             }
         })
+    }
+    val weather: LiveData<Weather> = Model.shared.weather
+
+    fun fetchWeather() {
+        Model.shared.getWeatherForecast()
     }
 
     private val _text = MutableLiveData<String>().apply {
