@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.shiqone.base.MyApplication
 import com.example.shiqone.model.Post
 
-@Database(entities = [Post::class], version = 3)
+@Database(entities = [Post::class], version = 6)
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun postDao() : PostDao
 }
