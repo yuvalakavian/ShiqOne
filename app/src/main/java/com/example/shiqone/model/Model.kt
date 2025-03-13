@@ -10,7 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import com.example.shiqone.model.dao.AppLocalDb
 import com.example.shiqone.model.dao.AppLocalDbRepository
 import com.example.shiqone.model.networking.WeatherClient
-import com.idz.colman24class1.model.FirebaseModel
+import com.example.shiqone.ui.CloudinaryModel
+import com.example.shiqone.model.FirebaseModel
 import java.util.concurrent.Executors
 
 class Model private constructor() {
@@ -33,6 +34,7 @@ class Model private constructor() {
     val weather: MutableLiveData<Weather> = MutableLiveData()
 
     private val firebaseModel = FirebaseModel()
+    private val cloudinaryModel = CloudinaryModel()
 
     companion object {
         val shared = Model()
@@ -45,18 +47,16 @@ class Model private constructor() {
             executor.execute {
                 var currentTime = lastUpdated
                 for (post in posts) {
-                    if (!post.isDeleted) {  // Ensure only non-deleted posts are stored
-                        if(userID != "" && post.userID != userID){
-                            continue
-                        }
-                        database.postDao().insertAll(post)
+                    // Only process posts that match the userID filter (if specified)
+                    if (userID.isEmpty() || post.userID == userID) {
+                        database.postDao().insert(post)
+
+                        // Update lastUpdated timestamp only for relevant posts
                         post.lastUpdated?.let {
                             if (currentTime < it) {
                                 currentTime = it
                             }
                         }
-                    } else {
-                        database.postDao().delete(post) // Remove deleted posts if they exist
                     }
                 }
 
@@ -65,7 +65,6 @@ class Model private constructor() {
             }
         }
     }
-
     fun update(post: Post, callback: EmptyCallback) {
         firebaseModel.update(post, callback)
     }
@@ -76,10 +75,10 @@ class Model private constructor() {
                 uploadTo(
                     storage,
                     image = image,
-                    name = post.id,
+                    name = post.id.toString(),
                     callback = { uri ->
                         if (!uri.isNullOrBlank()) {
-                            val st = post.copy(userID = uri)
+                            val st = post.copy(avatarUri = uri)
                             firebaseModel.add(st, callback)
                         } else {
                             callback()
@@ -135,12 +134,12 @@ class Model private constructor() {
         onSuccess: (String?) -> Unit,
         onError: (String?) -> Unit
     ) {
-//        cloudinaryModel.uploadImage(
-//            bitmap = bitmap,
-//            name = name,
-//            onSuccess = onSuccess,
-//            onError = onError
-//        )
+        cloudinaryModel.uploadImage(
+            bitmap = bitmap,
+            name = name,
+            onSuccess = onSuccess,
+            onError = onError
+        )
     }
 
     fun getWeatherForecast() {
@@ -151,7 +150,7 @@ class Model private constructor() {
 
                 if (response.isSuccessful) {
                     val weather_response_body = response.body()
-                    Log.e("TAG", "Fetched weather!")
+                    Log.d("TAG", "Fetched weather!")
                     this.weather.postValue(weather_response_body)
                 } else {
                     Log.e("TAG", "Failed to fetch weather!")

@@ -16,11 +16,14 @@ import java.io.Serializable
 @Entity
 data class Post(
     @PrimaryKey val id: String,
-    var name: String,
+    var content: String,
     val userID: String,
+    val userName: String,
+    var avatarUri: String,
     var isDeleted: Boolean,
     val lastUpdated: Long? = null
 ) : Serializable {
+
     companion object {
 
         var lastUpdated: Long
@@ -36,25 +39,27 @@ data class Post(
 
 
         const val ID_KEY = "id"
-        const val NAME_KEY = "name"
+        const val CONTENT_KEY = "content"
         const val USER_ID_KEY = "userID"
-        const val IS_DELETED_KEY = "isChecked"
+        const val AVATAR_URL_KEY = "avatarUrl"
+        const val IS_DELETED_KEY = "isDeleted"
         const val LAST_UPDATED = "lastUpdated"
         const val LOCAL_LAST_UPDATED = "locaStudentLastUpdated"
-        
+        const val USERNAME_KEY = "userName"
+
+
         fun fromJSON(json: Map<String, Any>): Post {
-            val id = json[ID_KEY] as? String ?: ""
-            val name = json[NAME_KEY] as? String ?: ""
-            val avatarUrl = json[NAME_KEY] as? String ?: ""
-            val isChecked = json[IS_DELETED_KEY] as? Boolean ?: false
-            val timeStamp = json[LAST_UPDATED] as? Timestamp
-            val lastUpdatedLongTimestamp = timeStamp?.toDate()?.time
+            // Get Firebase document ID as String
+            val firebaseId = json[ID_KEY] as? String ?: ""
+
             return Post(
-                id = id,
-                name = name,
-                userID = avatarUrl,
-                isDeleted = isChecked,
-                lastUpdated = lastUpdatedLongTimestamp
+                id = firebaseId, // Set Firebase ID as primary key
+                content = json[CONTENT_KEY] as? String ?: "",
+                userID = json[USER_ID_KEY] as? String ?: "",
+                avatarUri = json[AVATAR_URL_KEY] as? String ?: "",
+                isDeleted = json[IS_DELETED_KEY] as? Boolean ?: false,
+                userName = json[USERNAME_KEY] as? String ?: "",  // New field mapping
+                lastUpdated = (json[LAST_UPDATED] as? Timestamp)?.toDate()?.time
             )
         }
     }
@@ -62,10 +67,12 @@ data class Post(
     val json: Map<String, Any>
         get() = hashMapOf(
                 ID_KEY to id,
-                NAME_KEY to name,
-                USER_ID_KEY to userID,
+            CONTENT_KEY to content,
+            USER_ID_KEY to userID,
+            USERNAME_KEY to userName,
+                AVATAR_URL_KEY to avatarUri,
                 IS_DELETED_KEY to isDeleted,
                 LAST_UPDATED to FieldValue.serverTimestamp()
             )
-        
+
 }
