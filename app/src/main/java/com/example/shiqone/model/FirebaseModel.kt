@@ -101,4 +101,45 @@ class FirebaseModel {
                 Log.e("BAD", it.toString() + it.message)
             }
     }
+
+    fun getUser(userId: String, callback: (User?) -> Unit) {
+        database.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val user = User(
+                        id = document.id,
+                        displayName = document.getString(User.DISPLAY_NAME_KEY) ?: "",
+                        avatarUri = document.getString(User.AVATAR_URL_KEY) ?: "",
+                        lastUpdated = document.getTimestamp(User.LAST_UPDATED)?.toDate()?.time
+                    )
+                    callback(user)
+                } else {
+                    callback(null)
+                }
+            }
+            .addOnFailureListener {
+                Log.e("Firebase", "Error fetching user", it)
+                callback(null)
+            }
+    }
+
+    fun addUser(user: User, callback: EmptyCallback) {
+        database.collection("users").document(user.id).set(user.json)
+            .addOnCompleteListener {
+                callback()
+            }
+            .addOnFailureListener {
+                Log.e("Firebase", "Error adding user", it)
+            }
+    }
+
+    fun updateUser(user: User, callback: EmptyCallback) {
+        database.collection("users").document(user.id).set(user.json)
+            .addOnCompleteListener {
+                callback()
+            }
+            .addOnFailureListener {
+                Log.e("Firebase", "Error updating user", it)
+            }
+    }
 }

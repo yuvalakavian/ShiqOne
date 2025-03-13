@@ -9,4 +9,9 @@
     <string name="sign_in">Sign In</string>
     <string name="email">email</string>
     <string name="password">password</string>
+    <string name="random_text">Flowy maxi or midi dresses, light and free, With floral prints like blooms on a tree. Tribal patterns bold and bright, Dancing colors in the sun’s warm light. Soft fabrics that sway with the breeze, Graceful movement, effortless ease. Earthy tones or vibrant hues, A style so chic, you’ll never lose. Perfect for summer, day or night, A dreamy look that feels just right.</string>
+    <string name="already_have_account">already have an acount?</string>
+    <string name="confirm_password">confirm password</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="full_name">full name</string>
 </resources>
