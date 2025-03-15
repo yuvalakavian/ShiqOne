@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class UploadViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "Upload your Shiq Post Now :)"
     }
     val text: LiveData<String> = _text
 }

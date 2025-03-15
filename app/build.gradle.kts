@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
     implementation(libs.androidx.cardview)
+    implementation(libs.androidx.recyclerview)
     kapt("androidx.room:room-compiler:2.6.1") // Annotation processor
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

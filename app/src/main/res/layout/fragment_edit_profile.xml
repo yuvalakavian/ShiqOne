@@ -31,7 +31,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/circular_border"
                 android:scaleType="centerCrop"
-                android:src="@drawable/post_image_1" />
+                android:src="@drawable/ic_profile_placeholder" />
 
             <!-- Name field in a TextInputLayout for floating label style -->
             <com.google.android.material.textfield.TextInputLayout

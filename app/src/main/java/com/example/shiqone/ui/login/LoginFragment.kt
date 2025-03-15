@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.shiqone.R
 import com.example.shiqone.ui.profile.ProfileFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -47,7 +48,8 @@ class LoginFragment : Fragment() {
                             val result = Bundle()
                             result.putString("username", "JohnDoe")
                             parentFragmentManager.setFragmentResult("loginKey", result)
-                            requireActivity().supportFragmentManager.popBackStackImmediate()
+                            requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
                         } else {
                             Toast.makeText(
                                 context,
@@ -69,7 +71,7 @@ class LoginFragment : Fragment() {
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment_activity_main, signupFragment)
                 .addToBackStack(null)
-                .commit()
+                .commitAllowingStateLoss()
         }
 
 

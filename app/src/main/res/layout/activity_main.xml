@@ -10,14 +10,16 @@
     android:paddingTop="?attr/actionBarSize"
     tools:context=".ui.MainActivity">
 
+    <!-- Logout Button on Top Right -->
+
     <!-- BottomNavigationView -->
 
     <Button
         android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:padding="4dp"
+        android:layout_margin="0dp"
+        android:padding="0dp"
         android:text="Logout"
         android:textSize="12sp"
         android:visibility="visible"
@@ -52,5 +54,6 @@
         app:navGraph="@navigation/mobile_navigation" />
 
     <!-- ImageView on top of all -->
+    <!-- You can add your ImageView here if needed -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
