@@ -6,17 +6,19 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.shiqone.base.MyApplication
 import com.example.shiqone.model.Post
+import com.example.shiqone.model.User
 
-@Database(entities = [Post::class], version = 6)
+@Database(entities = [Post::class, User::class], version = 7)
 abstract class AppLocalDbRepository: RoomDatabase() {
-    abstract fun postDao() : PostDao
+    abstract fun postDao(): PostDao
+    abstract fun userDao(): UserDao
 }
-
 object AppLocalDb {
 
     val database: AppLocalDbRepository by lazy {
 
-        val context = MyApplication.Globals.context ?: throw IllegalStateException("Application context is missing")
+        val context = MyApplication.Globals.context
+            ?: throw IllegalStateException("Application context is missing")
 
         Room.databaseBuilder(
             context = context,

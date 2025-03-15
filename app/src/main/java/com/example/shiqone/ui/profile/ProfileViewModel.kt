@@ -3,17 +3,17 @@ package com.example.shiqone.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.shiqone.model.FirebaseModel
 import com.example.shiqone.model.Model
 import com.example.shiqone.model.Weather
+import com.example.shiqone.model.dao.AppLocalDb.database
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import java.util.concurrent.Executors
 
 class ProfileViewModel : ViewModel() {
     private val _userName = MutableLiveData<String>()
     val userName: LiveData<String> = _userName
+    private var executor = Executors.newSingleThreadExecutor()
 
     private val _profileImageUrl = MutableLiveData<String>()
     val profileImageUrl: LiveData<String> = _profileImageUrl
@@ -22,26 +22,29 @@ class ProfileViewModel : ViewModel() {
         fetchUserData()
     }
 
-    private fun fetchUserData() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val userRef = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+    fun fetchUserData() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userId = currentUser?.uid ?: return
 
-        userRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                // Update name
-                val name = snapshot.child("name").getValue(String::class.java) ?: ""
-                _userName.postValue(name)
+        // Fetch user data from local Room database first (if available)
+        executor.execute {
 
-                // Update image URL
-                val imageUrl = snapshot.child("profileImageUrl").getValue(String::class.java) ?: ""
-                _profileImageUrl.postValue(imageUrl)
+            val firebaseModel = FirebaseModel()
+            firebaseModel.getUser(userId) { user ->
+                if (user != null) {
+                    _userName.postValue(user.displayName)
+                    _profileImageUrl.postValue(user.avatarUri)
+
+                    // Save the fetched user locally for faster access next time
+                    executor.execute {
+                        database.userDao().insert(user)
+                    }
+                }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Handle error
-            }
-        })
+        }
     }
+
     val weather: LiveData<Weather> = Model.shared.weather
 
     fun fetchWeather() {

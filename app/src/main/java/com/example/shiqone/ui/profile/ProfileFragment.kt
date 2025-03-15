@@ -53,8 +53,9 @@ class ProfileFragment : Fragment() {
         }
 
         // Observe LiveData for the profile image URL and load via Picasso
+        profileViewModel.fetchUserData()
         profileViewModel.profileImageUrl.observe(viewLifecycleOwner) { imageUrl ->
-            if (!imageUrl.isNullOrEmpty()) {
+            if (imageUrl!= "") {
                 Picasso.get().load(imageUrl).into(binding.profileImage)
             } else {
                 binding.profileImage.setImageResource(R.drawable.ic_profile_black_24dp)
@@ -70,34 +71,7 @@ class ProfileFragment : Fragment() {
         val currentUser = auth.currentUser
 
         if (currentUser != null) {
-            binding.userName.text = currentUser.displayName
 
-            // Load profile image from Firebase Realtime Database
-            val userDatabaseRef = FirebaseDatabase.getInstance()
-                .getReference("Users")
-                .child(currentUser.uid)
-
-            userDatabaseRef.child("profileImageUrl").addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val imageUrl = snapshot.getValue(String::class.java)
-                    if (!imageUrl.isNullOrEmpty()) {
-                        Picasso.get()
-                            .load(imageUrl)
-                            .placeholder(R.drawable.ic_profile_black_24dp) // Show placeholder while loading
-                            .into(binding.profileImage)
-                    } else {
-                        // Load a default image if no URL is found
-                        binding.profileImage.setImageResource(R.drawable.ic_profile_black_24dp)
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle database error
-                    Log.e("FirebaseDB", "Failed to load profile image: ${error.message}")
-                    binding.profileImage.setImageResource(R.drawable.ic_profile_black_24dp)
-                }
-            })
         } else {
             // No user is logged in, redirect to login fragment
             val newFragment = LoginFragment()
