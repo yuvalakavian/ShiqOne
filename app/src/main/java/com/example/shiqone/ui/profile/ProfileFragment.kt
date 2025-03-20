@@ -47,6 +47,10 @@ class ProfileFragment : Fragment() {
             editFragment.show(parentFragmentManager, "EditProfileFragment")
         }
 
+        parentFragmentManager.setFragmentResultListener("edit_profile_result", this) { _, _ ->
+            profileViewModel.fetchUserData()
+        }
+
         // Observe LiveData for username and update the UI accordingly
         profileViewModel.userName.observe(viewLifecycleOwner) { name ->
             binding.userName.text = name

@@ -45,9 +45,6 @@ class PostsRecyclerViewAdapter(
         holder.postImage.setImageResource(R.drawable.ic_profile_placeholder)
         holder.profileImage.setImageResource(R.drawable.ic_profile_placeholder)
 
-        // Set post header (user name)
-        holder.postHeader.text = post.userName
-
         // Fetch avatarUri from Firebase based on the userId for profile image
         val firebaseModel = FirebaseModel()
         firebaseModel.getUser(post.userID) { user ->

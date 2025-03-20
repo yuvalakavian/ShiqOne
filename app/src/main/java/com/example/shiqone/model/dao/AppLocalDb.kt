@@ -8,7 +8,7 @@ import com.example.shiqone.base.MyApplication
 import com.example.shiqone.model.Post
 import com.example.shiqone.model.User
 
-@Database(entities = [Post::class, User::class], version = 7)
+@Database(entities = [Post::class, User::class], version = 8)
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun postDao(): PostDao
     abstract fun userDao(): UserDao
