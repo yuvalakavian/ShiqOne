@@ -1,5 +1,6 @@
 package com.example.shiqone
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -45,13 +46,13 @@ class PostsListViewModel : ViewModel() {
 
     fun updatePost(updatedPost: Post) {
         Model.shared.update(updatedPost){
-
+            Log.d("Post Updated", updatedPost.toString())
         }
     }
 
     fun deletePost(post: Post) {
         Model.shared.delete(post){
-
+            Log.d("Post Deleted", post.toString())
         }
     }
 }

@@ -70,9 +70,7 @@ class ProfileFragment : Fragment() {
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
-        if (currentUser != null) {
-
-        } else {
+        if (currentUser == null) {
             // No user is logged in, redirect to login fragment
             val newFragment = LoginFragment()
             requireActivity().supportFragmentManager.beginTransaction()
