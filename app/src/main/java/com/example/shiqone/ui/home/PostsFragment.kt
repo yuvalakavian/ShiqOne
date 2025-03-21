@@ -1,5 +1,6 @@
 package com.example.shiqone.ui.home;
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -132,14 +132,20 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
     override fun onEditPost(post: Post?) {
         val editFragment = EditPostFragment.newInstance(post)
         editFragment.setEditPostListener(object : EditPostFragment.EditPostListener {
-            override fun onPostEdited(updatedPost: Post?) {
-                if (post != null) {
-                    viewModel.updatePost(post)
+            override fun onPostEdited(updatedPost: Post?, bitmap: Bitmap?) {
+                if (updatedPost != null) {
+                    if (bitmap == null){
+                    viewModel.updatePost(updatedPost, null)
+                    } else{
+                    viewModel.updatePost(updatedPost,bitmap)// Allow bitmap to be null
+                    }
                 }
             }
         })
         editFragment.show(parentFragmentManager, "EditPostFragment")
     }
+
+
 
 
     override fun onDeletePost(post: Post?) {
