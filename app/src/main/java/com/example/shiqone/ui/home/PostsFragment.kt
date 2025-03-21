@@ -66,11 +66,11 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
         // Button listeners to filter posts.
         myPostsButton.setOnClickListener {
             progressBar.visibility = View.VISIBLE;
-            viewModel.loadMyPosts(); // This method should update the posts LiveData with only the user's posts.
+            viewModel.setPostsMode(true); // This method should update the posts LiveData with only the user's posts.
         }
         allPostsButton.setOnClickListener {
             progressBar.visibility = View.VISIBLE;
-            viewModel.refreshAllPosts(); // This method should update the posts LiveData with all posts.
+            viewModel.setPostsMode(false); // This method should update the posts LiveData with all posts.
         }
 
         // Swipe-to-refresh listener to reload posts.
@@ -84,6 +84,17 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
             greetingsTextView.text = greeting
         }
 
+        parentFragmentManager.setFragmentResultListener("edit_post_result", this) { _, _ ->
+            // Reload the fragment
+            parentFragmentManager.beginTransaction()
+                .detach(this)
+                .commit()
+
+            parentFragmentManager.beginTransaction()
+                .attach(this)
+                .commit()
+
+        }
 
         return view;
     }
