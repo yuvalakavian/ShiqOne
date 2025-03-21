@@ -1,44 +1,46 @@
 package com.example.shiqone.ui
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import com.example.shiqone.R
 import com.example.shiqone.model.Post
 import com.squareup.picasso.Picasso
+import java.io.IOException
 
 class EditPostFragment : DialogFragment() {
     private var editTextPost: EditText? = null
     private var buttonSave: Button? = null
     private var buttonCancel: Button? = null
     private var imageSelector: ImageView? = null
-    private var updatedUri: String = ""
+    private var selectedImageUri: Uri? = null
     private var post: Post? = null
     private var listener: EditPostListener? = null
 
-    // Launcher for picking an image from the gallery
-    private lateinit var imagePickerLauncher: ActivityResultLauncher<String>
-
-    interface EditPostListener {
-        fun onPostEdited(updatedPost: Post?)
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            selectedImageUri = result.data!!.data
+            imageSelector?.setImageURI(selectedImageUri)
+        }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
-                updatedUri = it.toString()
-                loadImage(updatedUri) // Load the selected image properly
-            }
-        }
+    interface EditPostListener {
+        fun onPostEdited(updatedPost: Post?, bitmap: Bitmap?)
     }
 
     override fun onCreateView(
@@ -52,44 +54,55 @@ class EditPostFragment : DialogFragment() {
         buttonCancel = view.findViewById(R.id.button_cancel)
         imageSelector = view.findViewById(R.id.image_selector)
 
-        // Retrieve passed post data, if any
         post = arguments?.getSerializable(ARG_POST) as? Post
         post?.let {
             editTextPost?.setText(it.content)
-            updatedUri = it.avatarUri ?: ""
-            loadImage(updatedUri)
+            it.avatarUri?.let { uri -> loadImage(uri) }
         }
 
-        // Set a click listener to launch the image picker when the ImageView is tapped
-        imageSelector?.setOnClickListener {
-            imagePickerLauncher.launch("image/*")
-        }
-
-        // Save button listener
-        buttonSave?.setOnClickListener {
-            post?.content = editTextPost?.text.toString()
-            post?.avatarUri = updatedUri
-            listener?.onPostEdited(post)
-            dismiss()
-        }
-
-        // Cancel button listener
+        imageSelector?.setOnClickListener { pickImageFromGallery() }
+        buttonSave?.setOnClickListener { savePostChanges() }
         buttonCancel?.setOnClickListener { dismiss() }
 
         return view
     }
 
     private fun loadImage(uri: String) {
-        if (uri.isNotEmpty()) {
-            Picasso.get()
-                .load(uri)
-                .placeholder(R.drawable.ic_profile_black_24dp) // Add a placeholder while loading
-                .error(R.drawable.ic_profile_black_24dp) // Add an error placeholder if loading fails
-                .into(imageSelector!!)
+        if (uri != "") {
+            Picasso.get().load(uri).placeholder(R.drawable.ic_profile_black_24dp).into(imageSelector!!)
         } else {
             imageSelector?.setImageResource(R.drawable.ic_profile_black_24dp)
         }
     }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        imagePickerLauncher.launch(intent)
+    }
+
+    private fun savePostChanges() {
+        post?.content = editTextPost?.text.toString()
+
+        if (selectedImageUri != null) {
+            try {
+                val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(
+                    requireActivity().contentResolver, selectedImageUri
+                )
+                post?.avatarUri = selectedImageUri.toString()
+                listener?.onPostEdited(post, bitmap)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Toast.makeText(context, "Failed to process image", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // Ensure the post updates even if no new image is selected
+            listener?.onPostEdited(post, null)
+        }
+
+        dismiss()
+    }
+
 
     fun setEditPostListener(listener: EditPostListener) {
         this.listener = listener
@@ -104,5 +117,10 @@ class EditPostFragment : DialogFragment() {
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun dismiss() {
+        parentFragmentManager.setFragmentResult("edit_post_result", Bundle())
+        super.dismiss()
     }
 }

@@ -2,16 +2,13 @@ package com.example.shiqone.model
 
 import EmptyCallback
 import android.graphics.Bitmap
-import android.os.Looper
 import android.util.Log
-import androidx.core.os.HandlerCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.shiqone.model.dao.AppLocalDb
 import com.example.shiqone.model.dao.AppLocalDbRepository
 import com.example.shiqone.model.networking.WeatherClient
 import com.example.shiqone.ui.CloudinaryModel
-import com.example.shiqone.model.FirebaseModel
 import java.util.concurrent.Executors
 
 class Model private constructor() {
@@ -28,7 +25,6 @@ class Model private constructor() {
 
     private val database: AppLocalDbRepository = AppLocalDb.database
     private var executor = Executors.newSingleThreadExecutor()
-    private var mainHandler = HandlerCompat.createAsync(Looper.getMainLooper())
     val posts: LiveData<List<Post>> = database.postDao().getAllPost()
     val loadingState: MutableLiveData<LoadingState> = MutableLiveData<LoadingState>()
     val weather: MutableLiveData<Weather> = MutableLiveData()
@@ -65,8 +61,24 @@ class Model private constructor() {
             }
         }
     }
-    fun update(post: Post, callback: EmptyCallback) {
-        firebaseModel.update(post, callback)
+    fun updatePost(post: Post, image: Bitmap?, storage: Storage = Storage.CLOUDINARY, callback: EmptyCallback) {
+        firebaseModel.update(post){
+            image?.let {
+                uploadTo(
+                    storage,
+                    image = image,
+                    name = post.id.toString(),
+                    callback = { uri ->
+                        if (!uri.isNullOrBlank()) {
+                            val st = post.copy(avatarUri = uri)
+                            firebaseModel.update(st, callback)
+                        } else {
+                            callback()
+                        }
+                    },
+                )
+            } ?: callback()
+        }
     }
 
     fun add(post: Post, image: Bitmap?, storage: Storage, callback: EmptyCallback) {
@@ -185,8 +197,7 @@ class Model private constructor() {
 
     fun addUser(user: User) {
         firebaseModel.addUser(user){
-
+            Log.d("User Added to Firebase", user.toString())
         }
     }
-
 }

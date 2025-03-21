@@ -21,7 +21,7 @@ data class Post(
     val userName: String,
     var avatarUri: String,
     var isDeleted: Boolean,
-    val lastUpdated: Long? = null
+    var lastUpdated: Long? = null
 ) : Serializable {
 
     companion object {

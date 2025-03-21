@@ -48,37 +48,6 @@
     <!-- Event Title -->
 
     <!-- Weather Spinner -->
-    <Spinner
-        android:id="@+id/weather_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/weather_options"
-        app:layout_constraintTop_toBottomOf="@id/event_title"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp" />
-
-    <!-- Style Spinner -->
-    <Spinner
-        android:id="@+id/style_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/style_options"
-        app:layout_constraintTop_toBottomOf="@id/event_title"
-        app:layout_constraintStart_toEndOf="@id/weather_spinner"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp" />
-
-    <!-- Dress Code Spinner -->
-    <Spinner
-        android:id="@+id/dress_code_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:entries="@array/dress_code_options"
-        app:layout_constraintTop_toBottomOf="@id/event_title"
-        app:layout_constraintStart_toEndOf="@id/style_spinner"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp" />
 
     <!-- Dress Suggestions -->
     <EditText
@@ -90,7 +59,8 @@
         android:inputType="textMultiLine"
         android:padding="8dp"
         android:text="@string/random_text"
-        app:layout_constraintTop_toBottomOf="@id/weather_spinner"
+        android:textSize="32dp"
+        app:layout_constraintTop_toBottomOf="@id/event_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp" />

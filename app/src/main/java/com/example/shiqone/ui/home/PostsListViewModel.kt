@@ -1,57 +1,66 @@
 package com.example.shiqone
 
+import android.graphics.Bitmap
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
+import com.example.shiqone.base.MyApplication.Globals.context
 import com.example.shiqone.model.Model
 import com.example.shiqone.model.Post
 import com.google.firebase.auth.FirebaseAuth
 
 class PostsListViewModel : ViewModel() {
     private val _showOnlyMine = MutableLiveData(false)
-    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    // Original posts source
-    private val allPosts = Model.shared.posts
+    // LiveData source for all posts
+    private val allPosts: LiveData<List<Post>> = Model.shared.posts
 
-    // Filtered LiveData using extensions
+    // Posts LiveData that updates dynamically
     val posts: LiveData<List<Post>> = _showOnlyMine.switchMap { showMine ->
-        if (showMine) {
-            allPosts.map { posts ->
-                posts.filter {
-                    it.userID == currentUserId
-                }
+        allPosts.map { posts ->
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+            val filteredPosts = if (showMine && currentUserId != null) {
+                posts.filter { it.userID == currentUserId }
+            } else {
+                posts
             }
-        } else {
-            allPosts
+            filteredPosts.sortedByDescending { it.lastUpdated }
         }
     }
 
+    fun setPostsMode(showOnlyMine: Boolean) {
+        _showOnlyMine.value = showOnlyMine
+    }
+
     fun refreshAllPosts() {
-        _showOnlyMine.value = false
         Model.shared.refreshAllPosts()
-        _showOnlyMine.value = _showOnlyMine.value // Force update
     }
 
-    fun loadMyPosts() {
-        _showOnlyMine.value = true
-        Model.shared.refreshAllPosts()
-        _showOnlyMine.value = _showOnlyMine.value // Force update
-    }
-
-
-
-    fun updatePost(updatedPost: Post) {
-        Model.shared.update(updatedPost){
-
+    fun updatePost(updatedPost: Post, bitmap: Bitmap?) {
+        Model.shared.updatePost(updatedPost,bitmap) {
+            Log.d("PostsListViewModel", "Post Updated: $updatedPost")
+            Toast.makeText(
+                context,
+                "Post Updated Successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+            refreshAllPosts()  // Force refresh after updating
         }
     }
 
     fun deletePost(post: Post) {
-        Model.shared.delete(post){
-
+        Model.shared.delete(post) {
+            Log.d("PostsListViewModel", "Post Deleted: $post")
+            Toast.makeText(
+                context,
+                "Post Deleted Successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+            refreshAllPosts()  // Force refresh after deleting
         }
     }
 }

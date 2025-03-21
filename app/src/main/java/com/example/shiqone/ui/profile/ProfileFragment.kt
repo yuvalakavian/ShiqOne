@@ -35,16 +35,32 @@ class ProfileFragment : Fragment() {
         // Weather display (unchanged)
         profileViewModel.fetchWeather()
         profileViewModel.weather.observe(viewLifecycleOwner) { weather ->
-            binding.weatherTemp.text = String.format(
-                "%s °C",
-                weather.hourlyWeather.temperature2m[0].toString()
-            )
+            // Retrieve the current temperature from the weather model
+            val temperature = weather.hourlyWeather.temperature2m[0]
+
+            // Update the weather temperature TextView
+            binding.weatherTemp.text = String.format("%s °C", temperature.toString())
+
+            // Determine dress suggestions based on temperature ranges
+            val suggestions = when {
+                temperature > 25 -> "Wear a cotton T-shirt, shorts, and sandals for a breezy day. Also, remember to apply sunscreen and stay hydrated."
+                temperature in 15.0..25.0 -> "Try a long-sleeve shirt or lightweight sweater with jeans or chinos for a comfortable look. You might also consider a light scarf or jacket in case it gets cooler later."
+                else -> "Consider layering with a warm jacket, sweater, and boots to stay cozy. Don't forget to accessorize with a hat and gloves for extra warmth."
+            }
+
+            // Update the dress suggestions EditText
+            binding.dressSuggestions.setText(suggestions)
         }
+
 
         // Open the edit profile fragment when clicking the edit icon
         binding.editIcon.setOnClickListener {
             val editFragment = EditProfileFragment()
             editFragment.show(parentFragmentManager, "EditProfileFragment")
+        }
+
+        parentFragmentManager.setFragmentResultListener("edit_profile_result", this) { _, _ ->
+            profileViewModel.fetchUserData()
         }
 
         // Observe LiveData for username and update the UI accordingly
@@ -70,9 +86,7 @@ class ProfileFragment : Fragment() {
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
-        if (currentUser != null) {
-
-        } else {
+        if (currentUser == null) {
             // No user is logged in, redirect to login fragment
             val newFragment = LoginFragment()
             requireActivity().supportFragmentManager.beginTransaction()

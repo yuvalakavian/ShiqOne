@@ -120,4 +120,9 @@ class EditProfileFragment : DialogFragment() {
         super.onDestroyView()
         binding = null
     }
+
+    override fun dismiss() {
+        parentFragmentManager.setFragmentResult("edit_profile_result", Bundle())
+        super.dismiss()
+    }
 }
