@@ -1,25 +1,27 @@
 package com.example.shiqone.ui.home;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.viewModels;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.example.shiqone.PostsListViewModel;
-import com.example.shiqone.R;
-import com.example.shiqone.adapter.PostsRecyclerViewAdapter;
-import com.example.shiqone.model.Post;
-import com.example.shiqone.ui.EditPostFragment;
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.shiqone.PostsListViewModel
+import com.example.shiqone.R
+import com.example.shiqone.adapter.PostsRecyclerViewAdapter
+import com.example.shiqone.model.Post
+import com.example.shiqone.ui.EditPostFragment
 import com.example.shiqone.ui.login.LoginFragment
 import com.google.firebase.auth.FirebaseAuth
+
 
 class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
     private lateinit var recyclerView: RecyclerView;
@@ -29,6 +31,8 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
     private lateinit var swipeRefresh: SwipeRefreshLayout;
     private lateinit var postsAdapter: PostsRecyclerViewAdapter;
     private lateinit var greetingsTextView: TextView
+    private val greetingViewModel: GreetingViewModel by viewModels()
+
 
     // Obtain the PostsListViewModel (similar to StudentsListViewModel)
     private val viewModel: PostsListViewModel by viewModels();
@@ -62,17 +66,34 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
         // Button listeners to filter posts.
         myPostsButton.setOnClickListener {
             progressBar.visibility = View.VISIBLE;
-            viewModel.loadMyPosts(); // This method should update the posts LiveData with only the user's posts.
+            viewModel.setPostsMode(true); // This method should update the posts LiveData with only the user's posts.
         }
         allPostsButton.setOnClickListener {
             progressBar.visibility = View.VISIBLE;
-            viewModel.refreshAllPosts(); // This method should update the posts LiveData with all posts.
+            viewModel.setPostsMode(false); // This method should update the posts LiveData with all posts.
         }
 
         // Swipe-to-refresh listener to reload posts.
         swipeRefresh.setOnRefreshListener {
             viewModel.refreshAllPosts();
             swipeRefresh.isRefreshing = false
+        }
+
+        // Initialize the GreetingViewModel.
+        greetingViewModel.greeting.observe(viewLifecycleOwner) { greeting ->
+            greetingsTextView.text = greeting
+        }
+
+        parentFragmentManager.setFragmentResultListener("edit_post_result", this) { _, _ ->
+            // Reload the fragment
+            parentFragmentManager.beginTransaction()
+                .detach(this)
+                .commit()
+
+            parentFragmentManager.beginTransaction()
+                .attach(this)
+                .commit()
+
         }
 
         return view;
@@ -89,8 +110,7 @@ class PostsFragment : Fragment(), PostsRecyclerViewAdapter.PostActionListener {
         if (currentUser != null) {
             // A user is logged in
             // You can use currentUser.uid, currentUser.email, etc.
-            greetingsTextView.text = String.format("Hi %s,\nhave a shiq day ",currentUser.displayName)
-
+            greetingViewModel.updateGreetingFromFirebase()
         } else {
             // No user is logged in
             // Redirect to login or show a message accordingly

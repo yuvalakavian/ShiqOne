@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.shiqone.databinding.ActivityMainBinding
+import com.example.shiqone.ui.home.PostsFragment
 import com.example.shiqone.ui.login.LoginFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             val username = bundle.getString("username")
             binding.logoutButton.visibility = View.VISIBLE
             binding.navView.visibility = View.VISIBLE
-
+            findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_home)
         }
     }
 }

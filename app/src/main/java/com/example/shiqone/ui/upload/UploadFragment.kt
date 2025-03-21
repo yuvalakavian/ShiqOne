@@ -2,7 +2,6 @@ package com.example.shiqone.ui.upload
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +24,6 @@ import java.util.UUID
 
 class UploadFragment : Fragment() {
     private var binding: FragmentUploadBinding? = null
-    private var cameraLauncher: ActivityResultLauncher<Void?>? = null
     private var didSetImage = false
     private val imagePickerLauncher = registerForActivityResult<Intent, ActivityResult>(
         ActivityResultContracts.StartActivityForResult()
@@ -43,6 +40,7 @@ class UploadFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         super.onCreateOptionsMenu(menu, inflater)
@@ -73,25 +71,9 @@ class UploadFragment : Fragment() {
                 view
             )
         }
-//        binding!!.cancelButton.setOnClickListener { view: View ->
-//            this.onCancelClick(
-//                view
-//            )
-//        }
         binding!!.takePhotoButton.setOnClickListener { v -> pickImageFromGallery() }
 
 
-//        cameraLauncher = registerForActivityResult<Void?, Bitmap>(
-////            TakePicturePreview()
-//        ) { bitmap: Bitmap? ->
-//            if (bitmap != null) {
-//                binding.imageView.setImageBitmap(bitmap)
-//                didSetImage = true
-//            }
-//        }
-//
-//        binding.takePhotoButton.setOnClickListener { v -> cameraLauncher!!.launch(null) }
-        // Retrieve the FirebaseAuth instance
         val auth = FirebaseAuth.getInstance()
 
         // Check if a user is logged in
@@ -152,10 +134,6 @@ class UploadFragment : Fragment() {
                 findNavController(view).popBackStack()
             }
         }
-    }
-
-    private fun onCancelClick(view: View) {
-        findNavController(view).popBackStack()
     }
 
     private fun pickImageFromGallery() {

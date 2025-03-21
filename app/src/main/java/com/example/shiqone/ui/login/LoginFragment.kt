@@ -48,6 +48,7 @@ class LoginFragment : Fragment() {
                             val result = Bundle()
                             result.putString("username", "JohnDoe")
                             parentFragmentManager.setFragmentResult("loginKey", result)
+                            parentFragmentManager.setFragmentResult("login_result", Bundle.EMPTY)
                             requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
                         } else {

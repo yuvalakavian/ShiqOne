@@ -11,6 +11,7 @@ import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.example.shiqone.utils.extensions.toFirebaseTimestamp
+import com.google.firebase.Timestamp
 import java.io.ByteArrayOutputStream
 
 class FirebaseModel {
@@ -93,6 +94,7 @@ class FirebaseModel {
     }
 
     fun update(post: Post, callback: EmptyCallback) {
+        post.lastUpdated = Timestamp.now().seconds
         database.collection(Constants.Collections.POSTS).document(post.id.toString()).set(post.json)
             .addOnCompleteListener {
                 callback()

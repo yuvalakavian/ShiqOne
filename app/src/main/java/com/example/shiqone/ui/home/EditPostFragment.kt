@@ -105,4 +105,9 @@ class EditPostFragment : DialogFragment() {
             return fragment
         }
     }
+
+    override fun dismiss() {
+        parentFragmentManager.setFragmentResult("edit_post_result", Bundle())
+        super.dismiss()
+    }
 }

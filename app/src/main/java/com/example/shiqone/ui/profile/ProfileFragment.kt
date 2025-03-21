@@ -47,6 +47,10 @@ class ProfileFragment : Fragment() {
             editFragment.show(parentFragmentManager, "EditProfileFragment")
         }
 
+        parentFragmentManager.setFragmentResultListener("edit_profile_result", this) { _, _ ->
+            profileViewModel.fetchUserData()
+        }
+
         // Observe LiveData for username and update the UI accordingly
         profileViewModel.userName.observe(viewLifecycleOwner) { name ->
             binding.userName.text = name
@@ -70,9 +74,7 @@ class ProfileFragment : Fragment() {
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
-        if (currentUser != null) {
-
-        } else {
+        if (currentUser == null) {
             // No user is logged in, redirect to login fragment
             val newFragment = LoginFragment()
             requireActivity().supportFragmentManager.beginTransaction()
