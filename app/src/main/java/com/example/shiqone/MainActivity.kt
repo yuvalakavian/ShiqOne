@@ -2,19 +2,16 @@ package com.example.shiqone
 
 import android.os.Bundle
 import android.view.View
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.shiqone.databinding.ActivityMainBinding
-import com.example.shiqone.ui.home.PostsFragment
 import com.example.shiqone.ui.login.LoginFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,9 +51,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        //TODO: safe args params
-        // Retrieve the FirebaseAuth instance
-        // Check if a user is logged in
         val currentUser = auth.currentUser
         if (currentUser != null) {
             binding.logoutButton.visibility = View.VISIBLE

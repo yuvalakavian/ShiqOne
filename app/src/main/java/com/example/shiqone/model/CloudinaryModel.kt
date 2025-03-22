@@ -1,14 +1,14 @@
 package com.example.shiqone.ui
-import android.content.Context
 import android.graphics.Bitmap
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.policy.GlobalUploadPolicy
+import com.example.shiqone.BuildConfig
 import com.example.shiqone.base.MyApplication
 import com.example.shiqone.utils.extensions.toFile
 import java.io.File
-import com.example.shiqone.BuildConfig
+
 class CloudinaryModel {
 
     init {

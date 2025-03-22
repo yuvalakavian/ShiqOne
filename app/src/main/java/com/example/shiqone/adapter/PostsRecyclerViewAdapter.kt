@@ -1,26 +1,19 @@
 package com.example.shiqone.adapter
 
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shiqone.R
-import com.example.shiqone.base.MyApplication.Globals.context
 import com.example.shiqone.model.FirebaseModel
 import com.example.shiqone.model.Post
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+
 class PostsRecyclerViewAdapter(
     private var posts: List<Post>,
     private val listener: PostActionListener
