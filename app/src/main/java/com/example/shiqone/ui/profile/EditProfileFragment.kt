@@ -17,7 +17,6 @@ import androidx.fragment.app.DialogFragment
 import com.example.shiqone.databinding.FragmentEditProfileBinding
 import com.example.shiqone.model.FirebaseModel
 import com.example.shiqone.model.Model
-import com.example.shiqone.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso

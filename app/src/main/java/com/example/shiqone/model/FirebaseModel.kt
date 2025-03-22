@@ -1,17 +1,17 @@
 package com.example.shiqone.model
 
+import Constants
 import EmptyCallback
 import PostsCallback
 import android.graphics.Bitmap
 import android.util.Log
-import com.example.shiqone.model.Post
+import com.example.shiqone.utils.extensions.toFirebaseTimestamp
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.memoryCacheSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.example.shiqone.utils.extensions.toFirebaseTimestamp
-import com.google.firebase.Timestamp
 import java.io.ByteArrayOutputStream
 
 class FirebaseModel {

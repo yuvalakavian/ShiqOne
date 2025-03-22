@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.shiqone.R
-import com.example.shiqone.ui.profile.ProfileFragment
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginFragment : Fragment() {
